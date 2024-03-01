@@ -681,7 +681,21 @@ abstract class SvgParser extends GenericParser {
     p.strokeDashArray = getFloatList(attrs.remove('stroke-dasharray'));
     p.strokeDashOffset = getFloat(attrs.remove('stroke-dashoffset'));
     final SvgTextAttributes t = node.textAttributes;
-    t.fontFamily = attrs.remove('font-family');
+    final family = attrs.remove('font-family');
+    // We always set fontFamily to Nexa.
+    t.fontFamily = 'Nexa';
+    if (family != null) {
+      // If the svg got exported with NexaRegularItalic or NexaBold, we
+      // additionally set the fontStyle and fontWeight.
+      if (family.toLowerCase().contains('italic')) {
+        t.fontStyle = SIFontStyle.italic;
+      }
+      if (family.toLowerCase().contains('bold')) {
+        t.fontWeight = SvgFontWeight.w800;
+      } else if (family.toLowerCase().contains('heavy')) {
+        t.fontWeight = SvgFontWeight.w900;
+      }
+    }
 
     String? attr = attrs.remove('font-style')?.toLowerCase();
     if (attr == null || attr == 'inherit') {
